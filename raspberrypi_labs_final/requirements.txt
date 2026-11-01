@@ -1,0 +1,4 @@
+numpy
+gpiozero
+lgpio
+RPLCD
