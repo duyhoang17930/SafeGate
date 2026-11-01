@@ -46,6 +46,7 @@ datasets/ppe_enriched/*
 
 # Training checkpoints and generated training/export output
 *.pt
+!models/ppe_best.pt
 *.pth
 *.ckpt
 runs/

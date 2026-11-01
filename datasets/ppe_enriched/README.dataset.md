@@ -14,8 +14,10 @@ The added images have mixed AGPL-3.0 and CC BY 4.0 provenance. Keep `NOTICE.md` 
 
 Archive SHA-256: `f5f6f1966c4bdfff4151ee68fa0da21f446e1b788d15280e5f70028c69ec88c5`
 
-Train with:
+The completed Kaggle training notebook is at `notebooks/ppe-yolo-enriched-training.ipynb`; its metrics are summarized in `models/PPE_TRAINING_REPORT.md`.
+
+To train again from the project root with the current checkpoint:
 
 ```bash
-python tools/train_ppe.py --model yolo11n.pt --data datasets/ppe_enriched/data.yaml --output models/ppe_enriched_best.pt
+yolo detect train model=models/ppe_best.pt data=datasets/ppe_enriched/data.yaml epochs=60 imgsz=640 batch=16 device=0 project=runs/detect name=ppe_enriched
 ```

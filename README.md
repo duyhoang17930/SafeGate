@@ -12,6 +12,10 @@ This project implements the phases from `prompt.md` for a Raspberry Pi-friendly 
 8. Tracking, PPE association, identity reuse, violation logging
 9. Benchmarking PT/ONNX/NCNN on the actual target device
 
+## Current PPE Model
+
+The default `models/ppe_best.pt` and 320x320 `models/ppe_best.onnx` are the enriched YOLO11n model. The ONNX deployment copies in both Raspberry Pi packages were updated to match. Training details and held-out results are in [models/PPE_TRAINING_REPORT.md](models/PPE_TRAINING_REPORT.md); the saved Kaggle notebook is [notebooks/ppe-yolo-enriched-training.ipynb](notebooks/ppe-yolo-enriched-training.ipynb).
+
 ## Setup
 
 ```bash
@@ -163,4 +167,4 @@ Use 5-10 clear photos per person. Avoid photos with multiple faces because those
 
 ## Model Licensing
 
-This repo does not bundle pretrained InsightFace or YOLO weights. Record the source and license for every downloaded model before using it beyond school/demo work.
+This repo includes the project-fine-tuned PPE checkpoint and ONNX export. The upstream `yolo11n.pt` initialization checkpoint is not included. PPE training data provenance and its mixed source licenses are documented in `datasets/ppe_enriched/NOTICE.md`; keep that notice and `attribution-atharion.csv` with the dataset. Record the source and license for all face-recognition weights before using them beyond school/demo work.
