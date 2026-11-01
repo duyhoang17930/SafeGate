@@ -1,0 +1,8 @@
+path: D:/Hoc_Tap/Ki_7/IOT/TT/datasets/ppe
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: person
+  1: helmet
+  2: vest
