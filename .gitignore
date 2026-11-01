@@ -1,0 +1,59 @@
+# Python bytecode and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local databases, registered faces, and runtime logs
+*.db
+*.sqlite
+*.sqlite3
+data/*
+!data/.gitkeep
+face_db/*
+!face_db/.gitkeep
+logs/
+*.log
+
+# Datasets and source archives are large/licensed. Keep dataset configs and
+# provenance docs so the training data can be reproduced without committing it.
+datasets/*
+!datasets/ppe/
+!datasets/ppe_enriched/
+datasets/ppe/*
+!datasets/ppe/data.yaml
+datasets/ppe_enriched/*
+!datasets/ppe_enriched/data.yaml
+!datasets/ppe_enriched/*.md
+!datasets/ppe_enriched/*.csv
+
+# Training checkpoints and generated training/export output
+*.pt
+*.pth
+*.ckpt
+runs/
+weights/
+wandb/
+
+# Temporary/editor/OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
