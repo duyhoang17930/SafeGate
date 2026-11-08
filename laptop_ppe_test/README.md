@@ -22,7 +22,7 @@ run_model.bat --source "C:\path\to\your\photo.jpg"
 
 You can also provide a folder of images with `--source "C:\path\to\photos"`.
 
-The sample photos cover these cases: helmet and vest present, helmet missing, vest missing, and both missing. The detector reports person, helmet, and vest boxes; compare its detections with the sample names. A missing detection means the model did not detect that item in the current frame. Results depend on image quality and camera angle.
+The sample photos cover these cases: helmet and vest present, helmet missing, vest missing, and both missing. The detector reports person, helmet, and vest boxes; compare its detections with the sample names. A missing detection means the model did not detect that item in the current frame. Results depend on image quality and camera angle
 
 ## Files
 
