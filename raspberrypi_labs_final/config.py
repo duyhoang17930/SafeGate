@@ -50,6 +50,11 @@ DENIED_BUZZ_SECONDS = 1.5
 # - "console" for testing without display hardware.
 DISPLAY_MODE = "lcd_i2c"
 LCD_I2C_ADDRESS = 0x27
+# I2C bus number (/dev/i2c-N).
+# 1 = hardware I2C: SDA GPIO2, SCL GPIO3.
+# 3 = software I2C from /boot/firmware/config.txt:
+#     dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=19,i2c_gpio_scl=26
+LCD_I2C_PORT = 3
 LCD_COLUMNS = 16
 LCD_ROWS = 2
 

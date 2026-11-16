@@ -24,6 +24,8 @@ no face                    -> LCD "Waiting face",   all outputs off, door locked
 | LCD 16x2 I2C (PCF8574, 0x27)  | SDA = GPIO 2, SCL = GPIO 3  |
 | USB camera                    | `/dev/video0`               |
 
+Full step-by-step wiring, header diagram and checks: [`WIRING.md`](WIRING.md).
+
 Power the servo and the LCD from 5V and share GND with the Pi.
 Enable I2C with `sudo raspi-config` -> Interface Options -> I2C, then check
 the LCD with `i2cdetect -y 1` (should show `27`).

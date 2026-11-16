@@ -1,4 +1,4 @@
-from config import DISPLAY_MODE, LCD_COLUMNS, LCD_I2C_ADDRESS, LCD_ROWS
+from config import DISPLAY_MODE, LCD_COLUMNS, LCD_I2C_ADDRESS, LCD_I2C_PORT, LCD_ROWS
 from state import STATE
 
 
@@ -13,6 +13,7 @@ class Display:
                 self.lcd = CharLCD(
                     "PCF8574",
                     LCD_I2C_ADDRESS,
+                    port=LCD_I2C_PORT,
                     cols=LCD_COLUMNS,
                     rows=LCD_ROWS,
                     charmap="A00",
