@@ -1,36 +1,32 @@
-# Raspberry Pi Labs
+# Raspberry Pi Safety Access (Final)
 
-One folder, two lab run files.
+Face recognition + PPE (helmet & vest) check that controls a door servo,
+3 status LEDs, a buzzer and an I2C LCD.
 
-## Lab 1
-
-```bash
-python lab1.py
-```
-
-Behavior:
+## Behavior
 
 ```text
-known face + helmet + vest -> servo opens 90 degrees
-known face + missing PPE   -> buzzer
-unknown face               -> buzzer
-no face                    -> waits silently
+known face + helmet + vest -> LCD "Access granted", green LED, servo opens 90 degrees for 3 s
+known face + missing PPE   -> LCD "PPE missing",    yellow LED + buzzer
+unknown face               -> LCD "Access denied",  red LED + buzzer
+no face                    -> LCD "Waiting face",   all outputs off, door locked
 ```
 
-## Lab 2
+## Wiring (BCM numbering, see `config.py`)
 
-```bash
-python lab2.py
-```
+| Device                        | Pin                         |
+|-------------------------------|-----------------------------|
+| Green LED (+ 220-330 ohm)     | GPIO 17                     |
+| Yellow LED (+ 220-330 ohm)    | GPIO 23                     |
+| Red LED (+ 220-330 ohm)       | GPIO 27                     |
+| Active buzzer                 | GPIO 22                     |
+| Servo signal (SG90/MG90)      | GPIO 18                     |
+| LCD 16x2 I2C (PCF8574, 0x27)  | SDA = GPIO 2, SCL = GPIO 3  |
+| USB camera                    | `/dev/video0`               |
 
-Behavior:
-
-```text
-known face + helmet + vest -> green light
-known face + missing PPE   -> yellow light + buzzer
-unknown face               -> red light + buzzer
-no face                    -> all lights off
-```
+Power the servo and the LCD from 5V and share GND with the Pi.
+Enable I2C with `sudo raspi-config` -> Interface Options -> I2C, then check
+the LCD with `i2cdetect -y 1` (should show `27`).
 
 ## Setup On Raspberry Pi
 
@@ -47,14 +43,13 @@ Register a user once:
 python register_user.py --student-id 001 --name Huy
 ```
 
-Then run either lab:
+Run:
 
 ```bash
-python lab1.py
-python lab2.py
+python main.py
 ```
 
-When a lab starts, it opens a camera preview tab:
+When it starts, it opens a camera preview tab:
 
 ```text
 http://127.0.0.1:8080

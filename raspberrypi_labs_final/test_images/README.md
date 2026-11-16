@@ -3,7 +3,7 @@
 These images are copied from the local YOLO dataset for quick camera testing.
 Each image has exactly one labeled person.
 
-Show one image on a phone/laptop screen, point the Raspberry Pi camera at it, and check the lab output.
+Show one image on a phone/laptop screen, point the Raspberry Pi camera at it, and check the output.
 
 Expected cases:
 

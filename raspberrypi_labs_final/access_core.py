@@ -11,6 +11,7 @@ from config import (
     ACCESS_SAMPLES,
     DENIED_COOLDOWN_SECONDS,
     LOG_PATH,
+    PREVIEW_ENABLED,
     SAMPLE_INTERVAL_SECONDS,
 )
 from database import get_all_users, init_database
@@ -18,7 +19,6 @@ from display import Display
 from face_engine import FaceEngine
 from ppe_status import PPEStatus
 from preview_server import PreviewServer
-from config import PREVIEW_ENABLED
 
 
 def append_log(status: str, name: str, score: float, detail: str = "") -> None:
@@ -75,7 +75,7 @@ def collect_face_embedding(camera: Camera, face_engine: FaceEngine, display: Dis
     return embedding, "OK"
 
 
-def run_lab(hardware, title: str, use_yellow_for_ppe: bool) -> None:
+def run(hardware, title: str) -> None:
     init_database()
     camera = Camera()
     face_engine = FaceEngine()
@@ -135,8 +135,7 @@ def run_lab(hardware, title: str, use_yellow_for_ppe: bool) -> None:
                 display.show("PPE missing", missing)
                 append_log("DENIED", name, score, f"MISSING_{missing.upper()}")
                 print(f"[DENIED] {name} missing={missing} score={score:.4f}")
-                action = hardware.ppe_missing if use_yellow_for_ppe else hardware.access_denied
-                threading.Thread(target=action, daemon=True).start()
+                threading.Thread(target=hardware.ppe_missing, daemon=True).start()
                 time.sleep(DENIED_COOLDOWN_SECONDS)
                 continue
 

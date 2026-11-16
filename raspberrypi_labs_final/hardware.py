@@ -10,16 +10,26 @@ from config import (
     SERVO_LOCK_ANGLE,
     SERVO_OPEN_ANGLE,
     SERVO_PIN,
+    YELLOW_BUZZ_SECONDS,
+    YELLOW_LED_PIN,
 )
 
 
 class Hardware:
+    """Green/yellow/red LEDs, buzzer and door servo.
+
+    granted     -> green LED on + servo opens the door
+    ppe missing -> yellow LED + buzzer
+    denied      -> red LED + buzzer
+    """
+
     def __init__(self) -> None:
         self.lock = threading.Lock()
         try:
             from gpiozero import AngularServo, Buzzer, LED
 
             self.green_led = LED(GREEN_LED_PIN)
+            self.yellow_led = LED(YELLOW_LED_PIN)
             self.red_led = LED(RED_LED_PIN)
             self.buzzer = Buzzer(BUZZER_PIN)
             self.servo = AngularServo(
@@ -34,12 +44,14 @@ class Hardware:
         except Exception as error:
             print(f"[HARDWARE] GPIO unavailable, using mock mode: {error}")
             self.green_led = None
+            self.yellow_led = None
             self.red_led = None
             self.buzzer = None
             self.servo = None
             self.mock = True
 
-        self.lock_door()
+        self.all_off()
+        self._servo_angle(SERVO_LOCK_ANGLE)
 
     def _led(self, led, enabled: bool) -> None:
         if led is not None:
@@ -55,36 +67,49 @@ class Hardware:
             return
         self.servo.angle = angle
         time.sleep(0.7)
+        # Stop sending pulses so the servo does not jitter while idle.
         self.servo.detach()
 
-    def lock_door(self) -> None:
-        self._servo_angle(SERVO_LOCK_ANGLE)
+    def all_off(self) -> None:
         self._led(self.green_led, False)
+        self._led(self.yellow_led, False)
         self._led(self.red_led, False)
         self._buzzer(False)
 
     def access_granted(self) -> None:
         with self.lock:
-            self._led(self.red_led, False)
-            self._buzzer(False)
+            self.all_off()
             self._led(self.green_led, True)
+            print("[HARDWARE] GREEN + door open")
             self._servo_angle(SERVO_OPEN_ANGLE)
             time.sleep(DOOR_OPEN_SECONDS)
             self._servo_angle(SERVO_LOCK_ANGLE)
             self._led(self.green_led, False)
 
+    def ppe_missing(self) -> None:
+        with self.lock:
+            self.all_off()
+            self._led(self.yellow_led, True)
+            self._buzzer(True)
+            print("[HARDWARE] YELLOW + buzzer")
+            time.sleep(YELLOW_BUZZ_SECONDS)
+            self._buzzer(False)
+            self._led(self.yellow_led, False)
+
     def access_denied(self) -> None:
         with self.lock:
-            self._led(self.green_led, False)
+            self.all_off()
             self._led(self.red_led, True)
             self._buzzer(True)
+            print("[HARDWARE] RED + buzzer")
             time.sleep(DENIED_BUZZ_SECONDS)
             self._buzzer(False)
             self._led(self.red_led, False)
 
     def close(self) -> None:
-        self.lock_door()
-        for device in (self.green_led, self.red_led, self.buzzer, self.servo):
+        with self.lock:
+            self.all_off()
+            self._servo_angle(SERVO_LOCK_ANGLE)
+        for device in (self.green_led, self.yellow_led, self.red_led, self.buzzer, self.servo):
             if device is not None:
                 device.close()
-
