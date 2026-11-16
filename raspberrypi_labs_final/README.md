@@ -60,3 +60,15 @@ If the Raspberry Pi has no desktop browser, open this from another device on the
 ```text
 http://<raspberry-pi-ip>:8080
 ```
+
+## Web dashboard
+
+`main.py` also serves a JSON API on port 8080 (`/api/status`, `/api/logs`,
+`/api/users`). The Next.js dashboard in [`dashboard/`](dashboard/README.md)
+uses it to monitor the camera, LCD, LEDs, servo, buzzer and access log live:
+
+```bash
+cd dashboard && npm install && npm run dev
+```
+
+Open `http://localhost:3000` and enter `http://<raspberry-pi-ip>:8080`.

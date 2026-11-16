@@ -4,6 +4,7 @@ import threading
 import cv2
 
 from config import CAMERA_BACKEND, CAMERA_DEVICE, FRAME_HEIGHT, FRAME_WIDTH
+from state import STATE
 
 
 def _camera_source():
@@ -32,10 +33,14 @@ class Camera:
         with self.lock:
             ok, frame = self.capture.read()
         if not ok or frame is None or frame.size == 0:
+            STATE.set_device("camera", online=False)
             return None
+        height, width = frame.shape[:2]
+        STATE.set_device("camera", online=True, width=width, height=height, last_frame_at=time.time())
         return frame
 
     def release(self) -> None:
         with self.lock:
             self.capture.release()
+        STATE.set_device("camera", online=False)
 

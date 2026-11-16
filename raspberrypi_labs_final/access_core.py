@@ -19,9 +19,24 @@ from display import Display
 from face_engine import FaceEngine
 from ppe_status import PPEStatus
 from preview_server import PreviewServer
+from state import STATE
 
 
-def append_log(status: str, name: str, score: float, detail: str = "") -> None:
+def append_log(status: str, name: str, score: float, detail: str = "", ppe: dict | None = None) -> None:
+    counter = {"GRANTED": "granted", "PPE_MISSING": "ppe_missing"}.get(status, "denied")
+    STATE.record_event(
+        {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "status": status,
+            "name": name,
+            "score": round(score, 4),
+            "detail": detail,
+            "helmet": None if ppe is None else bool(ppe.get("helmet")),
+            "vest": None if ppe is None else bool(ppe.get("vest")),
+        },
+        counter,
+    )
+    STATE.set_system(phase=counter)
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     exists = LOG_PATH.exists()
     with LOG_PATH.open("a", newline="", encoding="utf-8") as fh:
@@ -56,10 +71,12 @@ def collect_face_embedding(camera: Camera, face_engine: FaceEngine, display: Dis
         result = face_engine.extract_single_face(frame)
         if result["success"]:
             embeddings.append(result["embedding"])
+            STATE.set_system(phase="scanning")
             display.show("Scanning", f"{len(embeddings)}/{ACCESS_SAMPLES}")
         else:
             last_status = result["status"]
             if last_status == "NO_FACE":
+                STATE.set_system(phase="waiting")
                 display.show("Waiting face", "")
             else:
                 display.show("Scan failed", last_status)
@@ -87,13 +104,16 @@ def run(hardware, title: str) -> None:
         preview = PreviewServer(camera)
         preview.start()
 
+    STATE.set_system(title=title, phase="waiting")
     display.show(title, "Ready")
     print(f"[SYSTEM] {title} started")
 
     try:
         while True:
             users = get_all_users()
+            STATE.set_system(users=len(users))
             if not users:
+                STATE.set_system(phase="no_users")
                 display.show("No users", "Register first")
                 time.sleep(2)
                 continue
@@ -133,14 +153,14 @@ def run(hardware, title: str) -> None:
             missing = missing_ppe_text(status_map)
             if missing:
                 display.show("PPE missing", missing)
-                append_log("DENIED", name, score, f"MISSING_{missing.upper()}")
+                append_log("PPE_MISSING", name, score, f"MISSING_{missing.upper()}", status_map)
                 print(f"[DENIED] {name} missing={missing} score={score:.4f}")
                 threading.Thread(target=hardware.ppe_missing, daemon=True).start()
                 time.sleep(DENIED_COOLDOWN_SECONDS)
                 continue
 
             display.show("Access granted", name)
-            append_log("GRANTED", name, score, detail)
+            append_log("GRANTED", name, score, detail, status_map)
             print(f"[GRANTED] {name} score={score:.4f} {detail}")
             threading.Thread(target=hardware.access_granted, daemon=True).start()
             time.sleep(ACCESS_COOLDOWN_SECONDS)

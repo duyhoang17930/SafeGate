@@ -1,4 +1,5 @@
 from config import DISPLAY_MODE, LCD_COLUMNS, LCD_I2C_ADDRESS, LCD_ROWS
+from state import STATE
 
 
 class Display:
@@ -20,10 +21,12 @@ class Display:
             except Exception as error:
                 print(f"[DISPLAY] LCD unavailable, using console: {error}")
                 self.mode = "console"
+        STATE.set_device("lcd", connected=self.lcd is not None)
 
     def show(self, line1: str, line2: str = "") -> None:
         line1 = str(line1)[:LCD_COLUMNS]
         line2 = str(line2)[:LCD_COLUMNS]
+        STATE.set_device("lcd", lines=[line1, line2])
         if self.lcd is None:
             print(f"[DISPLAY] {line1} | {line2}")
             return
