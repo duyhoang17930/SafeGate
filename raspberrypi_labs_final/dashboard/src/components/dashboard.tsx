@@ -184,14 +184,13 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-3">
-          <CameraCard
-            className="lg:col-span-2"
-            camera={d?.camera}
-            serverTime={s?.server_time}
-            streamUrl={base ? `${base}/stream.mjpg?k=${streamKey}` : null}
-          />
-          <div className="flex flex-col gap-4">
+        <div className="grid items-start gap-4 lg:grid-cols-3">
+          <div className="flex flex-col gap-4 lg:col-span-2">
+            <CameraCard
+              camera={d?.camera}
+              serverTime={s?.server_time}
+              streamUrl={base ? `${base}/stream.mjpg?k=${streamKey}` : null}
+            />
             <Card>
               <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 p-4 pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm">
@@ -218,14 +217,13 @@ export default function Dashboard() {
                 )}
               </CardContent>
             </Card>
-            <LcdCard lcd={d?.lcd} />
           </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <LedsCard green={d?.green_led} yellow={d?.yellow_led} red={d?.red_led} />
-          <ServoCard servo={d?.servo} />
-          <BuzzerCard buzzer={d?.buzzer} />
+          <div className="flex flex-col gap-4">
+            <LcdCard lcd={d?.lcd} />
+            <LedsCard green={d?.green_led} yellow={d?.yellow_led} red={d?.red_led} />
+            <ServoCard servo={d?.servo} />
+            <BuzzerCard buzzer={d?.buzzer} />
+          </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
