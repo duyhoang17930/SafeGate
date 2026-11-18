@@ -120,7 +120,7 @@ export default function Dashboard() {
     const day = new Date().toISOString().slice(0, 10);
     const counts: Record<Outcome, number> = { granted: 0, ppe_missing: 0, denied: 0 };
     for (const row of logs.data ?? []) {
-      if (row.timestamp.startsWith(day)) counts[classify(row.status, row.detail)] += 1;
+      if (row.timestamp?.startsWith(day)) counts[classify(row.status, row.detail)] += 1;
     }
     return counts;
   }, [logs.data]);
@@ -250,7 +250,7 @@ export default function Dashboard() {
                   <TableBody>
                     {(logs.data ?? []).map((row, i) => (
                       <TableRow key={`${row.timestamp}-${i}`}>
-                        <TableCell className="whitespace-nowrap font-mono text-xs text-muted-foreground">{row.timestamp.replace("T", " ")}</TableCell>
+                        <TableCell className="whitespace-nowrap font-mono text-xs text-muted-foreground">{row.timestamp?.replace("T", " ") ?? "-"}</TableCell>
                         <TableCell>
                           <OutcomePill outcome={classify(row.status, row.detail)} />
                         </TableCell>

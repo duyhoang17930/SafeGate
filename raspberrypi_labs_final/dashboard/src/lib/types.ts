@@ -84,9 +84,9 @@ export interface User {
 
 export type Outcome = "granted" | "ppe_missing" | "denied";
 
-export function classify(status: string, detail = ""): Outcome {
+export function classify(status: string | null | undefined, detail?: string | null): Outcome {
   if (status === "GRANTED") return "granted";
   // Older logs recorded missing PPE as DENIED with a MISSING_* detail.
-  if (status === "PPE_MISSING" || detail.startsWith("MISSING_")) return "ppe_missing";
+  if (status === "PPE_MISSING" || (detail ?? "").startsWith("MISSING_")) return "ppe_missing";
   return "denied";
 }

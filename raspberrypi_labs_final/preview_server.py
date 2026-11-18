@@ -24,7 +24,7 @@ def read_logs(limit: int) -> list[dict]:
     if not LOG_PATH.exists():
         return []
     with LOG_PATH.open(newline="", encoding="utf-8") as fh:
-        rows = deque(csv.DictReader(fh), maxlen=limit)
+        rows = deque(csv.DictReader(fh, restval=""), maxlen=limit)
     return list(reversed(rows))
 
 
